@@ -67,6 +67,10 @@ void insert(int key, void * data) {
 	}
 }
 
+int get_child(int key) {
+	return s[key].s_lchild == -1 ? s[key].s_rchild : s[key].s_lchild;
+}
+
 void erase(int key) {
 	s[key].data = NULL;
 
@@ -76,6 +80,33 @@ void erase(int key) {
 		s[s[key].s_lchild].s_par = s[key].s_par;
 	} else if (s[key].s_rchild != -1) {
 		s[s[key].s_rchild].s_par = s[key].s_par;
+	}
+
+	int child = get_child(key), current = key;
+
+	while(1) {
+		int last = current;
+		current = s[current].par;
+		int was_subtree_root = is_subtree_root(current);
+
+		if(current > last) {
+			s[current].s_lchild = child;
+		} else {
+			s[current].s_rchild = child;
+		}
+
+		if(s[current].data != NULL) {
+			break;
+		}
+
+		if(is_subtree_root(current)) {
+			break;
+		}
+
+		if(was_subtree_root) {
+			child = get_child(current);
+			s[child].s_par = s[current].s_par;
+		}
 	}
 }
 
