@@ -7,15 +7,17 @@ static int root;
 static int len;
 
 int is_subtree_root(int key) {
-	if(s[key].par == -1)
+	if(s[key].par == -1) {
 		return 1;
+	}
 
 	return (s[key].s_lchild != -1) && (s[key].s_rchild != -1);
 }
 
 void print_in_order_(int node) {
-	if(node == -1)
+	if(node == -1) {
 		return;
+	}
 
 	print_in_order_(s[node].lchild);
 
@@ -35,8 +37,9 @@ void insert(int key, void * data) {
 	s[key].data = data;
 	int child = key, current = key;
 
-	if(is_subtree_root(key))
+	if(is_subtree_root(key)) {
 		return;
+	}
 
 	while(1) {
 		int last = current;
@@ -145,8 +148,9 @@ int init(int l) {
 }
 
 void destroy(void) {
-	if(s)
+	if(s) {
 		free(s);
+	}
 
 	len = 0;
 }
