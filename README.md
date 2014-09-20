@@ -15,7 +15,7 @@ is bounded by the height of the tree (O(log(N)).
 Letting N be the input space size and n be the current number of elements held by the tree, the
 upper bounds on different operations is as follows:
 
-	Insertion: O(log(N/n))
-	Deletion: O(log(N/n))
-	Next/Previous element lookup: O(log(n))
-	Membership test: O(1)
+*Insertion: O(log(N/n))
+*Deletion: O(log(N/n))
+*Next/Previous element lookup: O(log(n))
+*Membership test: O(1)
