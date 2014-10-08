@@ -14,23 +14,91 @@ int is_subtree_root(int key) {
 	return (s[key].s_lchild != -1) && (s[key].s_rchild != -1);
 }
 
-void print_in_order_(int node) {
-	if(node == -1) {
+void print_node(int node) {
+	printf("Node %d: Static:(%d, %d, %d)\n        Dyamnic:(%d, %d, %d)\n", node,
+			s[node].par, s[node].lchild, s[node].rchild,
+			s[node].s_par, s[node].s_lchild, s[node].s_rchild);
+}
+
+void __print_tree(int root, int level, int* print_branchs) {
+	if(root == -1) {
 		return;
 	}
 
-	print_in_order_(s[node].lchild);
+	print_branchs[level+1] = 1;
 
-	fprintf(stderr, "%d\n   %d %d %d\n   %d %d %d\n",
-			node, s[node].par, s[node].lchild, s[node].rchild,
-			s[node].s_par, s[node].s_lchild, s[node].s_rchild);
+	int flip = print_branchs[level];
 
-	print_in_order_(s[node].rchild);
+	if(print_branchs[level]) {
+		print_branchs[level] = 0;
+	} else{
+		print_branchs[level] = 1;
+	}
+
+	__print_tree(s[root].rchild, level + 1, print_branchs);
+	print_branchs[level] = flip;
+
+	for(int i = 0; i < level; i++) {
+		if(print_branchs[i] == 1) {
+			printf("|   ");	
+		} else{
+			printf("    ");	
+		}
+	}
+
+	printf("+---%d\n", root);
+
+	print_branchs[level+1] = 0;
+
+	__print_tree(s[root].lchild, level + 1, print_branchs);
 }
 
-void print_in_order(void) {
-	fprintf(stderr, "Printing\n");
-	print_in_order_((len-1)/2);
+void print_tree(void) {
+	int print_branchs[10] = {0};
+	print_branchs[0] = 2;
+	__print_tree(root, 0, print_branchs);
+}
+
+void __print_stree(int root, int level, int* print_branchs) {
+	if(root == -1) {
+		return;
+	}
+
+	print_branchs[level+1] = 1;
+
+	int flip = print_branchs[level];
+
+	if(print_branchs[level]) {
+		print_branchs[level] = 0;
+	} else{
+		print_branchs[level] = 1;
+	}
+
+	__print_stree(s[root].s_rchild, level + 1, print_branchs);
+	print_branchs[level] = flip;
+
+	for(int i = 0; i < level; i++) {
+		if(print_branchs[i] == 1) {
+			printf("|   ");	
+		} else{
+			printf("    ");	
+		}
+	}
+
+	printf("+---%d\n", root);
+
+	print_branchs[level+1] = 0;
+
+	__print_stree(s[root].s_lchild, level + 1, print_branchs);
+}
+
+void print_stree(void) {
+	printf("\n\n---------------------------------\n\n");
+
+	int print_branchs[10] = {0};
+	print_branchs[0] = 2;
+
+	__print_stree(root, 0, print_branchs);
 }
 
 void insert(int key, void * data) {
@@ -39,6 +107,14 @@ void insert(int key, void * data) {
 
 	if(is_subtree_root(key)) {
 		return;
+	}
+
+	if(s[current].s_rchild != -1) {
+		s[s[current].s_rchild].s_par = current;
+	}
+
+	if(s[current].s_lchild != -1) {
+		s[s[current].s_lchild].s_par = current;
 	}
 
 	while(1) {
@@ -133,6 +209,26 @@ int set_structure(int left_bound, int right_bound, int par) {
 	}
 
 	return node;
+}
+
+int predecessor(int node) {
+	if(s[node].s_lchild != -1) {
+		while(s[node].s_lchild != -1) {
+			node = s[node].s_lchild;
+		}
+
+		return node;
+	} 
+}
+
+int successor(int node) {
+	if(s[node].s_rchild != -1) {
+		while(s[node].s_rchild != -1) {
+			node = s[node].s_rchild;
+		}
+
+		return node;
+	}
 }
 
 int init(int l) {
