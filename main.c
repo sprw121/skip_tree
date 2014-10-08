@@ -3,7 +3,7 @@
 
 int main() {
 	int x;
-	init(63);
+	init(15);
 
 	print_tree();
 

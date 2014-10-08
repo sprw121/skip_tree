@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 static skip_tree_node * s;
-static int root;
-static int len;
+static int root = -1;
+static int len = 0;
 
 int is_subtree_root(int key) {
 	if(s[key].par == -1) {
@@ -14,7 +14,12 @@ int is_subtree_root(int key) {
 	return (s[key].s_lchild != -1) && (s[key].s_rchild != -1);
 }
 
-void print_node(int node) {
+void print_node(int key) {
+	if(root == -1) {
+		printf("Uninitialized tree\n\n");
+		return;
+	}
+
 	printf("Node %d: Static:(%d, %d, %d)\n        Dyamnic:(%d, %d, %d)\n", node,
 			s[node].par, s[node].lchild, s[node].rchild,
 			s[node].s_par, s[node].s_lchild, s[node].s_rchild);
@@ -54,7 +59,13 @@ void __print_tree(int root, int level, int* print_branchs) {
 }
 
 void print_tree(void) {
+	if(root == -1) {
+		printf("Uninitialized tree\n\n");
+		return;
+	}
+
 	int print_branchs[10] = {0};
+
 	print_branchs[0] = 2;
 	__print_tree(root, 0, print_branchs);
 }
@@ -93,6 +104,11 @@ void __print_stree(int root, int level, int* print_branchs) {
 }
 
 void print_stree(void) {
+	if(root == -1) {
+		printf("Uninitialized tree\n\n");
+		return;
+	}
+
 	printf("\n\n---------------------------------\n\n");
 
 	int print_branchs[10] = {0};
@@ -102,6 +118,11 @@ void print_stree(void) {
 }
 
 void insert(int key, void * data) {
+	if(root == -1) {
+		printf("Uninitialized tree\n\n");
+		return;
+	}
+
 	s[key].data = data;
 	int child = key, current = key;
 
@@ -146,11 +167,16 @@ void insert(int key, void * data) {
 	}
 }
 
-int get_child(int key) {
+static inline int get_child(int key) {
 	return s[key].s_lchild == -1 ? s[key].s_rchild : s[key].s_lchild;
 }
 
 void erase(int key) {
+	if(root == -1) {
+		printf("Uninitialized tree\n\n");
+		return;
+	}
+
 	s[key].data = NULL;
 
 	if(is_subtree_root(key)) {
@@ -211,28 +237,91 @@ int set_structure(int left_bound, int right_bound, int par) {
 	return node;
 }
 
-int predecessor(int node) {
-	if(s[node].s_lchild != -1) {
-		while(s[node].s_lchild != -1) {
-			node = s[node].s_lchild;
+int predecessor(int key) {
+	if(root == -1) {
+		printf("Uninitialized tree\n\n");
+		return -1;
+	}
+
+	if(s[key].data == NULL) {
+		printf("Element with key %d has not yet been inserted", key);
+	}
+
+	if(s[key].s_lchild != -1) {
+		key = s[key].s_lchild;
+
+		while(s[key].s_rchild != -1) {
+			key = s[key].s_rchild;
 		}
 
-		return node;
+		return key;
+	} else {
+		int prev = key, curr = s[key].s_par;
+
+		while(key != -1 && key > prev) {
+			prev = key;
+			key = s[key].s_par;
+		}
+
+		if(key == -1) {
+			return -1;
+		}
+
+		if(s[key].data) {
+			return key;
+		}
+
+		key = key.s_lchild;
+
+		while(s[key].s_rchild != -1) {
+			key = s[key].s_rchild;
+		}
+
+		return key;
 	} 
 }
 
-int successor(int node) {
-	if(s[node].s_rchild != -1) {
-		while(s[node].s_rchild != -1) {
-			node = s[node].s_rchild;
+int successor(int key) {
+	if(root == -1) {
+		printf("Uninitialized tree\n\n");
+		return -1;
+	}
+
+	if(s[key].s_rchild != -1) {
+		node = s[key].s_rchild
+		while(s[key].s_lchild != -1) {
+			key = s[key].s_rchild;
 		}
 
 		return node;
-	}
+	} else {
+		int prev = key, curr = s[key].s_par;
+
+		while(key != -1 && key < prev) {
+			prev = key;
+			key = s[key].s_par;
+		}
+
+		if(key == -1) {
+			return -1;
+		}
+
+		if(s[key].data) {
+			return key;
+		}
+
+		key = key.s_rchild;
+
+		while(s[key].s_lchild != -1) {
+			key = s[key].s_lchild;
+		}
+
+		return key;
+	} 
 }
 
 int init(int l) {
-	if((s = (skip_tree_node*) malloc(l * sizeof(skip_tree_node))) == NULL) {
+	if((s = malloc(l * sizeof(skip_tree_node))) == NULL) {
 		return 1;
 	}
 
@@ -244,9 +333,15 @@ int init(int l) {
 }
 
 void destroy(void) {
+	if(root == -1) {
+		printf("Uninitialized tree\n\n");
+		return;
+	}
+
 	if(s) {
 		free(s);
 	}
 
+	root = -1;
 	len = 0;
 }
