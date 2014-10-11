@@ -3,71 +3,27 @@
 #include <stdlib.h>
 
 static skip_tree_node * s;
-static int root = -1;
+static int s_root = -1;
+static int d_root = -1;
 static int len = 0;
 
 int is_subtree_root(int key) {
-	if(s[key].par == -1) {
+	if(key == -1) {
 		return 1;
 	}
 
-	return (s[key].s_lchild != -1) && (s[key].s_rchild != -1);
+	return (s[key].d_lchild != -1) && (s[key].d_rchild != -1);
 }
 
 void print_node(int key) {
-	if(root == -1) {
+	if(s_root == -1) {
 		printf("Uninitialized tree\n\n");
 		return;
 	}
 
-	printf("Node %d: Static:(%d, %d, %d)\n        Dyamnic:(%d, %d, %d)\n", node,
-			s[node].par, s[node].lchild, s[node].rchild,
-			s[node].s_par, s[node].s_lchild, s[node].s_rchild);
-}
-
-void __print_tree(int root, int level, int* print_branchs) {
-	if(root == -1) {
-		return;
-	}
-
-	print_branchs[level+1] = 1;
-
-	int flip = print_branchs[level];
-
-	if(print_branchs[level]) {
-		print_branchs[level] = 0;
-	} else{
-		print_branchs[level] = 1;
-	}
-
-	__print_tree(s[root].rchild, level + 1, print_branchs);
-	print_branchs[level] = flip;
-
-	for(int i = 0; i < level; i++) {
-		if(print_branchs[i] == 1) {
-			printf("|   ");	
-		} else{
-			printf("    ");	
-		}
-	}
-
-	printf("+---%d\n", root);
-
-	print_branchs[level+1] = 0;
-
-	__print_tree(s[root].lchild, level + 1, print_branchs);
-}
-
-void print_tree(void) {
-	if(root == -1) {
-		printf("Uninitialized tree\n\n");
-		return;
-	}
-
-	int print_branchs[10] = {0};
-
-	print_branchs[0] = 2;
-	__print_tree(root, 0, print_branchs);
+	printf("Node %d: Static: (%d, %d, %d)\n        Dyamnic:(%d, %d, %d)\n", key,
+			s[key].s_par, s[key].s_lchild, s[key].s_rchild,
+			s[key].d_par, s[key].d_lchild, s[key].d_rchild);
 }
 
 void __print_stree(int root, int level, int* print_branchs) {
@@ -104,23 +60,84 @@ void __print_stree(int root, int level, int* print_branchs) {
 }
 
 void print_stree(void) {
-	if(root == -1) {
+	printf("\n\n---------------------------------\n\n");
+
+	if(s_root == -1) {
 		printf("Uninitialized tree\n\n");
 		return;
 	}
 
+	int print_branchs[10] = {0};
+
+	print_branchs[0] = 2;
+	__print_stree(s_root, 0, print_branchs);
+
 	printf("\n\n---------------------------------\n\n");
+}
+
+void __print_dtree(int root, int level, int* print_branchs) {
+	if(root == -1) {
+		return;
+	}
+
+	print_branchs[level+1] = 1;
+
+	int flip = print_branchs[level];
+
+	if(print_branchs[level]) {
+		print_branchs[level] = 0;
+	} else{
+		print_branchs[level] = 1;
+	}
+
+	__print_dtree(s[root].d_rchild, level + 1, print_branchs);
+	print_branchs[level] = flip;
+
+	for(int i = 0; i < level; i++) {
+		if(print_branchs[i] == 1) {
+			printf("|   ");	
+		} else{
+			printf("    ");	
+		}
+	}
+
+	printf("+---%d\n", root);
+
+	print_branchs[level+1] = 0;
+
+	__print_dtree(s[root].d_lchild, level + 1, print_branchs);
+}
+
+void print_dtree(void) {
+	printf("\n\n---------------------------------\n\n");
+	if(s_root == -1) {
+		printf("Uninitialized tree\n\n");
+		return;
+	}
+
+	if(d_root == -1) {
+		printf("Empty tree\n\n");
+		return;
+	}
 
 	int print_branchs[10] = {0};
 	print_branchs[0] = 2;
 
-	__print_stree(root, 0, print_branchs);
+	__print_dtree(d_root, 0, print_branchs);
+
+	printf("\n\n---------------------------------\n\n");
 }
 
 void insert(int key, void * data) {
-	if(root == -1) {
+	printf("Inserting %d\n", key);
+
+	if(s_root == -1) {
 		printf("Uninitialized tree\n\n");
 		return;
+	}
+
+	if(d_root == -1 || s[key].d_lchild == d_root || s[key].d_rchild == d_root) {
+		d_root = key;
 	}
 
 	s[key].data = data;
@@ -130,50 +147,64 @@ void insert(int key, void * data) {
 		return;
 	}
 
-	if(s[current].s_rchild != -1) {
-		s[s[current].s_rchild].s_par = current;
+	if(s[current].d_rchild != -1) {
+		s[s[current].d_rchild].d_par = current;
 	}
 
-	if(s[current].s_lchild != -1) {
-		s[s[current].s_lchild].s_par = current;
+	if(s[current].d_lchild != -1) {
+		s[s[current].d_lchild].d_par = current;
 	}
 
 	while(1) {
 		int last = current;
-		current = s[current].par;
+		current = s[current].s_par;
 
-		if(is_subtree_root(current)) {
+		if(current == -1) {
+			s[child].d_par = current;
+			break;
+		} else if(is_subtree_root(current)) {
 			if(current < last) {
-				s[current].s_rchild = child;
+				s[current].d_rchild = child;
 			} else {
-				s[current].s_lchild = child;
+				s[current].d_lchild = child;
 			}
 
-			s[child].s_par = current;
+			s[child].d_par = current;
 			break;
 		} else {
 			if(current < last) {
-				s[current].s_rchild = child;
+				s[current].d_rchild = child;
 			} else {
-				s[current].s_lchild = child;
+				s[current].d_lchild = child;
 			}
 
 			if(is_subtree_root(current)) {
-				s[s[current].s_lchild].s_par = current;
-				s[s[current].s_rchild].s_par = current;
+				s[s[current].d_lchild].d_par = current;
+				s[s[current].d_rchild].d_par = current;
 				child = current;
+
+				if(d_root == s[current].d_lchild || d_root == s[current].d_rchild) {
+					d_root = current;
+				}
 			}
 		}
 	}
 }
 
 static inline int get_child(int key) {
-	return s[key].s_lchild == -1 ? s[key].s_rchild : s[key].s_lchild;
+	return s[key].d_lchild == -1 ? s[key].d_rchild : s[key].d_lchild;
 }
 
 void erase(int key) {
-	if(root == -1) {
+	printf("Erasing %d\n", key);
+
+	if(s_root == -1) {
 		printf("Uninitialized tree\n\n");
+		return;
+	}
+
+	if(s[key].data == NULL) {
+		printf("Erase failed: Key %d does not exist\n", key);
 		return;
 	}
 
@@ -181,23 +212,32 @@ void erase(int key) {
 
 	if(is_subtree_root(key)) {
 		return;
-	} else if (s[key].s_lchild != -1) {
-		s[s[key].s_lchild].s_par = s[key].s_par;
-	} else if (s[key].s_rchild != -1) {
-		s[s[key].s_rchild].s_par = s[key].s_par;
+	} else if (s[key].d_lchild != -1) {
+		s[s[key].d_lchild].d_par = s[key].d_par;
+	} else if (s[key].d_rchild != -1) {
+		s[s[key].d_rchild].d_par = s[key].d_par;
 	}
 
 	int child = get_child(key), current = key;
 
+	if(d_root == key) {
+		d_root = child;
+	}
+
 	while(1) {
 		int last = current;
-		current = s[current].par;
+		current = s[current].s_par;
+
+		if(current == -1) {
+			return;
+		}
+
 		int was_subtree_root = is_subtree_root(current);
 
 		if(current > last) {
-			s[current].s_lchild = child;
+			s[current].d_lchild = child;
 		} else {
-			s[current].s_rchild = child;
+			s[current].d_rchild = child;
 		}
 
 		if(s[current].data != NULL) {
@@ -210,58 +250,40 @@ void erase(int key) {
 
 		if(was_subtree_root) {
 			child = get_child(current);
-			s[child].s_par = s[current].s_par;
+			s[child].d_par = s[current].d_par;
+		}
+
+		if(current == d_root && s[current].data == NULL) {
+			d_root = get_child(current);
 		}
 	}
 }
 
-int set_structure(int left_bound, int right_bound, int par) {
-	int node = left_bound + (right_bound - left_bound) / 2;
-	s[node].par = par;
-	s[node].s_par = -1;
-	s[node].s_lchild = -1;
-	s[node].s_rchild = -1;
-
-	if(left_bound != node) {
-		s[node].lchild = set_structure(left_bound, node - 1, node);
-	} else {
-		s[node].lchild = -1;
-	}
-
-	if(right_bound != node) {
-		s[node].rchild = set_structure(node + 1, right_bound, node);
-	} else {
-		s[node].rchild = -1;
-	}
-
-	return node;
-}
-
 int predecessor(int key) {
-	if(root == -1) {
+	if(s_root == -1) {
 		printf("Uninitialized tree\n\n");
 		return -1;
 	}
 
 	if(s[key].data == NULL) {
-		printf("Element with key %d has not yet been inserted", key);
+		printf("Element with key %d has not yet been inserted\n", key);
 	}
 
-	if(s[key].s_lchild != -1) {
-		key = s[key].s_lchild;
+	if(s[key].d_lchild != -1) {
+		key = s[key].d_lchild;
 
-		while(s[key].s_rchild != -1) {
-			key = s[key].s_rchild;
+		while(s[key].d_rchild != -1) {
+			key = s[key].d_rchild;
 		}
 
 		return key;
 	} else {
-		int prev = key, curr = s[key].s_par;
+		int prev;
 
-		while(key != -1 && key > prev) {
+		do {
 			prev = key;
-			key = s[key].s_par;
-		}
+			key = s[key].d_par;
+		} while(key != -1 && key > prev);
 
 		if(key == -1) {
 			return -1;
@@ -271,10 +293,10 @@ int predecessor(int key) {
 			return key;
 		}
 
-		key = key.s_lchild;
+		key = s[key].d_lchild;
 
-		while(s[key].s_rchild != -1) {
-			key = s[key].s_rchild;
+		while(s[key].d_rchild != -1) {
+			key = s[key].d_rchild;
 		}
 
 		return key;
@@ -282,25 +304,29 @@ int predecessor(int key) {
 }
 
 int successor(int key) {
-	if(root == -1) {
+	if(s_root == -1) {
 		printf("Uninitialized tree\n\n");
 		return -1;
 	}
 
-	if(s[key].s_rchild != -1) {
-		node = s[key].s_rchild
-		while(s[key].s_lchild != -1) {
-			key = s[key].s_rchild;
+	if(s[key].data == NULL) {
+		printf("Element with key %d has not yet been inserted\n", key);
+	}
+
+	if(s[key].d_rchild != -1) {
+		key = s[key].d_rchild;
+		while(s[key].d_lchild != -1) {
+			key = s[key].d_lchild;
 		}
 
-		return node;
+		return key;
 	} else {
-		int prev = key, curr = s[key].s_par;
+		int prev;
 
-		while(key != -1 && key < prev) {
+		do {
 			prev = key;
-			key = s[key].s_par;
-		}
+			key = s[key].d_par;
+		} while(key != -1 && key < prev);
 
 		if(key == -1) {
 			return -1;
@@ -310,14 +336,37 @@ int successor(int key) {
 			return key;
 		}
 
-		key = key.s_rchild;
+		key = s[key].d_rchild;
 
-		while(s[key].s_lchild != -1) {
-			key = s[key].s_lchild;
+		while(s[key].d_lchild != -1) {
+			key = s[key].d_lchild;
 		}
 
 		return key;
 	} 
+}
+
+int set_structure(int left_bound, int right_bound, int par) {
+	int node = left_bound + (right_bound - left_bound) / 2;
+	s[node].s_par = par;
+	s[node].d_par = -1;
+	s[node].d_lchild = -1;
+	s[node].d_rchild = -1;
+	s[node].data = NULL;
+
+	if(left_bound != node) {
+		s[node].s_lchild = set_structure(left_bound, node - 1, node);
+	} else {
+		s[node].s_lchild = -1;
+	}
+
+	if(right_bound != node) {
+		s[node].s_rchild = set_structure(node + 1, right_bound, node);
+	} else {
+		s[node].s_rchild = -1;
+	}
+
+	return node;
 }
 
 int init(int l) {
@@ -325,7 +374,8 @@ int init(int l) {
 		return 1;
 	}
 
-	root = set_structure(0, l - 1, -1);
+	s_root = set_structure(0, l - 1, -1);
+	d_root = -1;
 
 	len = l;
 
@@ -333,7 +383,7 @@ int init(int l) {
 }
 
 void destroy(void) {
-	if(root == -1) {
+	if(s_root == -1) {
 		printf("Uninitialized tree\n\n");
 		return;
 	}
@@ -342,6 +392,7 @@ void destroy(void) {
 		free(s);
 	}
 
-	root = -1;
+	s_root = -1;
+	d_root = -1;
 	len = 0;
 }

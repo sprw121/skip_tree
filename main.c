@@ -5,22 +5,35 @@ int main() {
 	int x;
 	init(15);
 
-	print_tree();
-
 	print_stree();
+
+	print_dtree();
 
 	insert(1, &x);
-	print_stree();
+
+	insert(2, &x);
+
 	insert(3, &x);
-	print_stree();
-	insert(11, &x);
-	print_stree();
+
+	insert(4, &x);
+
 	erase(1);
-	print_stree();
+	
+	insert(4, &x);
+
+	erase(2);
+
 	erase(3);
-	print_stree();
+
+	insert(5, &x);
+
+	insert(11, &x);
+	print_dtree();
+
+	erase(1);
+
 	erase(11);
-	print_stree();
+	print_dtree();
 
 	destroy();
 
