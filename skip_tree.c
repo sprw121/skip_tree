@@ -7,7 +7,7 @@ static skip_tree_node* s_root = NULL;
 static skip_tree_node* d_root = NULL;
 static int len = 0;
 
-int is_subtree_root(skip_tree_node* node) {
+static inline int is_subtree_root(skip_tree_node* node) {
 	if(node == NULL) {
 		return 1;
 	}
@@ -15,7 +15,7 @@ int is_subtree_root(skip_tree_node* node) {
 	return (node->d_lchild != NULL) && (node->d_rchild != NULL);
 }
 
-int stn_ptr_to_int(skip_tree_node* node) {
+static inline int stn_ptr_to_int(skip_tree_node* node) {
 	if(node == NULL) {
 		return -1;
 	}
@@ -35,7 +35,7 @@ void print_node(int key) {
 			stn_ptr_to_int(s[key].d_lchild), stn_ptr_to_int(s[key].d_rchild)); 
 }
 
-void __print_stree(skip_tree_node* node, int level, int* print_branchs) {
+static void __print_stree(skip_tree_node* node, int level, int* print_branchs) {
 	if(node == NULL) {
 		return;
 	}
@@ -84,7 +84,7 @@ void print_stree(void) {
 	printf("\n\n---------------------------------\n\n");
 }
 
-void __print_dtree(skip_tree_node* node, int level, int* print_branchs) {
+static void __print_dtree(skip_tree_node* node, int level, int* print_branchs) {
 	if(node == NULL) {
 		return;
 	}
@@ -273,6 +273,7 @@ void erase(int key) {
 	}
 }
 
+// This function is not fully implemented yet
 int predecessor(int key) {
 	if(s_root == NULL) {
 		printf("Uninitialized tree\n\n");
@@ -319,6 +320,7 @@ int predecessor(int key) {
 	} 
 }
 
+// This function is not fully implemented yet
 int successor(int key) {
 	if(s_root == NULL) {
 		printf("Uninitialized tree\n\n");
@@ -364,7 +366,7 @@ int successor(int key) {
 	} 
 }
 
-skip_tree_node* set_structure(int left_bound, int right_bound, skip_tree_node* par) {
+static skip_tree_node* set_structure(int left_bound, int right_bound, skip_tree_node* par) {
 	int node = left_bound + (right_bound - left_bound) / 2;
 	s[node].s_par =  par;
 	s[node].d_par = NULL;
