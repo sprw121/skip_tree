@@ -35,6 +35,10 @@ void print_node(int key) {
 			stn_ptr_to_int(s[key].d_lchild), stn_ptr_to_int(s[key].d_rchild)); 
 }
 
+static inline int flip(int i) {
+	return i == 0 ? 1 : 0;
+}
+
 static void __print_stree(skip_tree_node* node, int level, int* print_branchs) {
 	if(node == NULL) {
 		return;
@@ -42,19 +46,18 @@ static void __print_stree(skip_tree_node* node, int level, int* print_branchs) {
 
 	print_branchs[level+1] = 1;
 
-	int flip = print_branchs[level];
-
-	if(print_branchs[level]) {
-		print_branchs[level] = 0;
-	} else{
-		print_branchs[level] = 1;
-	}
+	print_branchs[level] = flip(print_branchs[level]);
 
 	__print_stree(node->s_rchild, level + 1, print_branchs);
-	print_branchs[level] = flip;
 
-	for(int i = 0; i < level; i++) {
-		if(print_branchs[i] == 1) {
+	print_branchs[level] = flip(print_branchs[level]);
+
+	if(level != 0) {
+		printf("    ");
+	}
+
+	for(int i = 1; i < level; i++) {
+		if(print_branchs[i]) {
 			printf("|   ");	
 		} else{
 			printf("    ");	
@@ -78,7 +81,6 @@ void print_stree(void) {
 
 	int print_branchs[10] = {0};
 
-	print_branchs[0] = 2;
 	__print_stree(s_root, 0, print_branchs);
 
 	printf("\n\n---------------------------------\n\n");
@@ -91,18 +93,17 @@ static void __print_dtree(skip_tree_node* node, int level, int* print_branchs) {
 
 	print_branchs[level+1] = 1;
 
-	int flip = print_branchs[level];
-
-	if(print_branchs[level]) {
-		print_branchs[level] = 0;
-	} else{
-		print_branchs[level] = 1;
-	}
+	print_branchs[level] = flip(print_branchs[level]);
 
 	__print_dtree(node->d_rchild, level + 1, print_branchs);
-	print_branchs[level] = flip;
 
-	for(int i = 0; i < level; i++) {
+	print_branchs[level] = flip(print_branchs[level]);
+
+	if(level != 0) {
+		printf("    ");
+	}
+
+	for(int i = 1; i < level; i++) {
 		if(print_branchs[i] == 1) {
 			printf("|   ");	
 		} else{
@@ -131,7 +132,6 @@ void print_dtree(void) {
 	}
 
 	int print_branchs[10] = {0};
-	print_branchs[0] = 2;
 
 	__print_dtree(d_root, 0, print_branchs);
 
