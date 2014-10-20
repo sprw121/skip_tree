@@ -17,3 +17,4 @@ void print_stree(void);
 void print_node(int);
 int successor(int);
 int predecessor(int);
+int contains(int);

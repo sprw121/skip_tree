@@ -7,6 +7,10 @@ static skip_tree_node* s_root = NULL;
 static skip_tree_node* d_root = NULL;
 static int len = 0;
 
+int contains(int key) {
+	return s[key].data != NULL;
+}
+
 static inline int is_subtree_root(skip_tree_node* node) {
 	if(node == NULL) {
 		return 1;
@@ -273,7 +277,6 @@ void erase(int key) {
 	}
 }
 
-// This function is not fully implemented yet
 int predecessor(int key) {
 	if(s_root == NULL) {
 		printf("Uninitialized tree\n\n");
@@ -320,7 +323,6 @@ int predecessor(int key) {
 	} 
 }
 
-// This function is not fully implemented yet
 int successor(int key) {
 	if(s_root == NULL) {
 		printf("Uninitialized tree\n\n");
