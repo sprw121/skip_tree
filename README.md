@@ -1,7 +1,7 @@
 # Overview
 
 This data structure uses a binary tree format to store ordered data. Rather than constructing the
-tree as dyanmicaly as data is input, this data structure pre-structures a binary tree the size of
+tree as dynamically as data is input, this data structure pre-structures a binary tree the size of
 the input space at initialization, and then fills in this tree as data is added. This leads to
 some interesting properties, namely that the insertion and deletion operations get faster as the
 tree gets denser. Each node in the tree has two sets of children and parents. The first set is
