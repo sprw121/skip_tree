@@ -7,11 +7,13 @@ static skip_tree_node* s_root = NULL;
 static skip_tree_node* d_root = NULL;
 static int len = 0;
 
-int contains(int key) {
+int contains(int key)
+{
     return s[key].data != NULL;
 }
 
-static inline int is_subtree_root(skip_tree_node* node) {
+static inline int is_subtree_root(skip_tree_node* node)
+{
     if(node == NULL) {
         return 1;
     }
@@ -19,7 +21,8 @@ static inline int is_subtree_root(skip_tree_node* node) {
     return (node->d_lchild != NULL) && (node->d_rchild != NULL);
 }
 
-static inline int stn_ptr_to_int(skip_tree_node* node) {
+static inline int stn_ptr_to_int(skip_tree_node* node)
+{
     if(node == NULL) {
         return -1;
     }
@@ -27,7 +30,8 @@ static inline int stn_ptr_to_int(skip_tree_node* node) {
     return node - s;
 }
 
-void print_node(int key) {
+void print_node(int key)
+{
     if(s_root == NULL) {
         printf("Uninitialized tree\n\n");
         return;
@@ -39,11 +43,13 @@ void print_node(int key) {
             stn_ptr_to_int(s[key].d_lchild), stn_ptr_to_int(s[key].d_rchild));
 }
 
-static inline int flip(int i) {
+static inline int flip(int i)
+{
     return i == 0 ? 1 : 0;
 }
 
-static void __print_stree(skip_tree_node* node, int level, int* print_branchs) {
+static void __print_stree(skip_tree_node* node, int level, int* print_branchs)
+{
     if(node == NULL) {
         return;
     }
@@ -75,7 +81,8 @@ static void __print_stree(skip_tree_node* node, int level, int* print_branchs) {
     __print_stree(node->s_lchild, level + 1, print_branchs);
 }
 
-void print_stree(void) {
+void print_stree(void)
+{
     printf("\n\n---------------------------------\n\n");
 
     if(s_root == NULL) {
@@ -90,7 +97,8 @@ void print_stree(void) {
     printf("\n\n---------------------------------\n\n");
 }
 
-static void __print_dtree(skip_tree_node* node, int level, int* print_branchs) {
+static void __print_dtree(skip_tree_node* node, int level, int* print_branchs)
+{
     if(node == NULL) {
         return;
     }
@@ -122,7 +130,8 @@ static void __print_dtree(skip_tree_node* node, int level, int* print_branchs) {
     __print_dtree(node->d_lchild, level + 1, print_branchs);
 }
 
-void print_dtree(void) {
+void print_dtree(void)
+{
     printf("\n\n---------------------------------\n\n");
 
     if(s_root == NULL) {
@@ -142,7 +151,8 @@ void print_dtree(void) {
     printf("\n\n---------------------------------\n\n");
 }
 
-void insert(int key, void * data) {
+void insert(int key, void * data)
+{
     printf("Inserting %d\n", key);
 
     if(s_root == NULL) {
@@ -209,11 +219,13 @@ void insert(int key, void * data) {
     }
 }
 
-static inline skip_tree_node* get_child(skip_tree_node* node) {
+static inline skip_tree_node* get_child(skip_tree_node* node)
+{
     return node->d_lchild == NULL ? node->d_rchild : node->d_lchild;
 }
 
-void erase(int key) {
+void erase(int key)
+{
     printf("Erasing %d\n", key);
 
     if(s_root == NULL) {
@@ -277,7 +289,8 @@ void erase(int key) {
     }
 }
 
-int predecessor(int key) {
+int predecessor(int key)
+{
     if(s_root == NULL) {
         printf("Uninitialized tree\n\n");
         return -1;
@@ -323,7 +336,8 @@ int predecessor(int key) {
     }
 }
 
-int successor(int key) {
+int successor(int key)
+{
     if(s_root == NULL) {
         printf("Uninitialized tree\n\n");
         return -1;
@@ -368,7 +382,8 @@ int successor(int key) {
     }
 }
 
-static skip_tree_node* set_structure(int left_bound, int right_bound, skip_tree_node* par) {
+static skip_tree_node* set_structure(int left_bound, int right_bound, skip_tree_node* par)
+{
     int node = left_bound + (right_bound - left_bound) / 2;
     s[node].s_par =  par;
     s[node].d_par = NULL;
@@ -391,7 +406,8 @@ static skip_tree_node* set_structure(int left_bound, int right_bound, skip_tree_
     return s + node;
 }
 
-int init(int length) {
+int init(int length)
+{
     if((s = malloc(length * sizeof(skip_tree_node))) == NULL) {
         return 1;
     }
@@ -404,7 +420,8 @@ int init(int length) {
     return 0;
 }
 
-void destroy(void) {
+void destroy(void)
+{
     if(s_root == NULL) {
         printf("Uninitialized tree\n\n");
         return;
